@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Bot, User, Copy, Bookmark, AlertCircle, Trash2, RotateCcw, MessageSquare, History, X } from 'lucide-react';
+import { Send, Bot, User, Copy, Bookmark, AlertCircle, Trash2, RotateCcw, MessageSquare, History, X, Calculator, Atom } from 'lucide-react';
 import { askHomework, isMockMode } from '../lib/ai';
 import { storage } from '../lib/storage';
 import Card from '../components/ui/Card';
@@ -182,6 +182,60 @@ export default function Ask() {
     console.log('Saved as pointer:', pointer);
   };
 
+  // Enhanced formula rendering function
+  const renderFormattedContent = (content: string) => {
+    // Split content into lines and process each
+    return content.split('\n').map((line, index) => {
+      // Handle LaTeX-style formulas ($$...$$)
+      if (line.includes('$$') && line.includes('$$')) {
+        const formulaMatch = line.match(/\$\$(.*?)\$\$/g);
+        if (formulaMatch) {
+          let processedLine = line;
+          formulaMatch.forEach(formula => {
+            const cleanFormula = formula.replace(/\$\$/g, '');
+            // Convert LaTeX to HTML with proper formatting
+            const htmlFormula = cleanFormula
+              .replace(/\\rightarrow/g, '→')
+              .replace(/\\text\{([^}]+)\}/g, '<span class="text-blue-600 font-medium">$1</span>')
+              .replace(/_(\d+)/g, '<sub>$1</sub>')
+              .replace(/\^(\d+)/g, '<sup>$1</sup>')
+              .replace(/([A-Z][a-z]?\d*)/g, '<span class="font-mono text-green-600">$1</span>')
+              .replace(/(\d+)/g, '<span class="font-mono text-orange-600">$1</span>');
+            
+            processedLine = processedLine.replace(formula, `<div class="formula-container bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 my-3"><div class="text-center text-lg font-mono">${htmlFormula}</div></div>`);
+          });
+          return <div key={index} dangerouslySetInnerHTML={{ __html: processedLine }} />;
+        }
+      }
+      
+      // Handle single $ formulas
+      if (line.includes('$') && line.includes('$')) {
+        const formulaMatch = line.match(/\$(.*?)\$/g);
+        if (formulaMatch) {
+          let processedLine = line;
+          formulaMatch.forEach(formula => {
+            const cleanFormula = formula.replace(/\$/g, '');
+            const htmlFormula = cleanFormula
+              .replace(/\\rightarrow/g, '→')
+              .replace(/\\text\{([^}]+)\}/g, '<span class="text-blue-600 font-medium">$1</span>')
+              .replace(/_(\d+)/g, '<sub>$1</sub>')
+              .replace(/\^(\d+)/g, '<sup>$1</sup>')
+              .replace(/([A-Z][a-z]?\d*)/g, '<span class="font-mono text-green-600">$1</span>')
+              .replace(/(\d+)/g, '<span class="font-mono text-orange-600">$1</span>');
+            
+            processedLine = processedLine.replace(formula, `<span class="formula-inline bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono text-sm">${htmlFormula}</span>`);
+          });
+          return <div key={index} dangerouslySetInnerHTML={{ __html: processedLine }} />;
+        }
+      }
+      
+      // Handle **bold** text
+      const formattedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900 dark:text-white">$1</strong>');
+      
+      return <div key={index} dangerouslySetInnerHTML={{ __html: formattedLine }} />;
+    });
+  };
+
   const renderMessage = (message: ChatMessage) => {
     const isUser = message.role === 'user';
     
@@ -220,16 +274,7 @@ export default function Ask() {
             
             <div className="prose prose-sm max-w-none">
               <div className="whitespace-pre-wrap leading-relaxed">
-                {message.content.split('\n').map((line, index) => {
-                  // Replace **text** with <strong>text</strong>
-                  const formattedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                  return (
-                    <div 
-                      key={index} 
-                      dangerouslySetInnerHTML={{ __html: formattedLine }}
-                    />
-                  );
-                })}
+                {renderFormattedContent(message.content)}
               </div>
             </div>
             
@@ -478,10 +523,34 @@ export default function Ask() {
               </select>
             </div>
 
+            {/* Formula Examples */}
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-blue-400 mb-3 flex items-center">
+                <Calculator className="w-4 h-4 mr-2" />
+                Formula Examples
+              </h3>
+              <div className="space-y-2 text-sm">
+                <div className="p-2 bg-gray-50 dark:bg-gray-700 rounded text-xs">
+                  <strong>Photosynthesis:</strong><br/>
+                  <code>{'$$6CO_2 + 6H_2O + \\text{Light Energy} \\rightarrow C_6H_{12}O_6 + 6O_2$$'}</code>
+                </div>
+                <div className="p-2 bg-gray-50 dark:bg-gray-700 rounded text-xs">
+                  <strong>Quadratic Formula:</strong><br/>
+                  <code>{'$$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$'}</code>
+                </div>
+                <div className="p-2 bg-gray-50 dark:bg-gray-700 rounded text-xs">
+                  <strong>Derivative:</strong><br/>
+                  <code>{'$$\\frac{d}{dx}[x^n] = nx^{n-1}$$'}</code>
+                </div>
+              </div>
+            </div>
+
             {/* Tips */}
             <div>
               <h3 className="font-bold text-gray-900 dark:text-blue-400 mb-3">Tips</h3>
               <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-2">
+                <li>• Use $$ for display formulas</li>
+                <li>• Use $ for inline formulas</li>
                 <li>• Be specific about what you need help with</li>
                 <li>• Include relevant formulas or concepts</li>
                 <li>• Ask for step-by-step explanations</li>
