@@ -26,7 +26,7 @@ export default function TopNav() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/feed" className="flex items-center space-x-2">
             <motion.div
               className="w-8 h-8 bg-gradient-to-br from-primary-600 to-primary-800 rounded-lg flex items-center justify-center"
               whileHover={{ scale: 1.05 }}
@@ -58,7 +58,7 @@ export default function TopNav() {
           {/* Desktop Navigation Links */}
           <div className="hidden lg:flex items-center space-x-1">
             <Link
-              to="/"
+              to="/feed"
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 isActive('/') 
                   ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' 
@@ -228,7 +228,7 @@ export default function TopNav() {
               <div className="py-4 space-y-2">
                 {/* Navigation Links */}
                 <Link
-                  to="/"
+                  to="/feed"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                     isActive('/') 

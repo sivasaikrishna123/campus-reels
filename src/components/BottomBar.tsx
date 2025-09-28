@@ -8,7 +8,7 @@ export default function BottomBar() {
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
-    { path: '/', icon: Home, label: 'Feed' },
+    { path: '/feed', icon: Home, label: 'Feed' },
     { path: '/courses', icon: BookOpen, label: 'Courses' },
     { path: '/ask', icon: MessageCircle, label: 'Ask' },
     { path: '/jobs', icon: Briefcase, label: 'Jobs' },

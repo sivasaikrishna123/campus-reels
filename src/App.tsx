@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { hydrateDemo } from './lib/storage';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -35,6 +35,10 @@ function App() {
             <Routes>
               <Route 
                 path="/" 
+                element={<Navigate to="/feed" replace />}
+              />
+              <Route 
+                path="/feed" 
                 element={
                   <motion.div
                     initial={{ opacity: 0, y: 12 }}
