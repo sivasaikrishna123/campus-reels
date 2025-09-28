@@ -219,7 +219,18 @@ export default function Ask() {
             </div>
             
             <div className="prose prose-sm max-w-none">
-              <div className="whitespace-pre-wrap leading-relaxed">{message.content}</div>
+              <div className="whitespace-pre-wrap leading-relaxed">
+                {message.content.split('\n').map((line, index) => {
+                  // Replace **text** with <strong>text</strong>
+                  const formattedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                  return (
+                    <div 
+                      key={index} 
+                      dangerouslySetInnerHTML={{ __html: formattedLine }}
+                    />
+                  );
+                })}
+              </div>
             </div>
             
             {!isUser && (
@@ -247,234 +258,236 @@ export default function Ask() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
+        className="flex-1 flex flex-col"
       >
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-blue-400 mb-2">
-            AI Homework Helper
-          </h1>
-          <p className="text-gray-600 dark:text-blue-300">
-            Get step-by-step guidance for your homework questions
-          </p>
-          
-          {/* AI Status Banner */}
-          {isMockMode() ? (
-            <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg flex items-center space-x-2">
-              <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
-              <span className="text-sm text-yellow-800 dark:text-yellow-200">
-                Demo mode: Using mock responses. Add VITE_GEMINI_KEY to your .env.local for real Google AI assistance.
-              </span>
+        {/* Header */}
+        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-blue-400">
+                CampusReels AI
+              </h1>
+              <p className="text-sm text-gray-600 dark:text-blue-300">
+                Get step-by-step guidance for your homework questions
+              </p>
             </div>
-          ) : (
-            <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg flex items-center space-x-2">
-              <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-              </div>
-              <span className="text-sm text-green-800 dark:text-green-200">
-                Connected to Google AI (Gemini 1.5 Flash) - Real AI assistance active!
-              </span>
+            
+            {/* AI Status Banner */}
+            <div className="flex items-center space-x-4">
+              {isMockMode() ? (
+                <div className="px-3 py-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg flex items-center space-x-2">
+                  <AlertCircle className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+                  <span className="text-xs text-yellow-800 dark:text-yellow-200">
+                    Demo Mode
+                  </span>
+                </div>
+              ) : (
+                <div className="px-3 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                  </div>
+                  <span className="text-xs text-green-800 dark:text-green-200">
+                    Google AI Active
+                  </span>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
+        <div className="flex-1 flex overflow-hidden">
           {/* Chat History Sidebar */}
           {showChatHistory && (
-            <div className="lg:col-span-1">
-              <Card className="h-[500px] lg:h-[600px]">
+            <div className="w-80 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <div className="h-full p-4">
                 <ChatLogsList
                   onSelectLog={loadChatLog}
                   selectedLogId={currentChatLog?.id}
                   onNewChat={startNewChat}
                 />
-              </Card>
+              </div>
             </div>
           )}
           
           {/* Chat Area */}
-          <div className={showChatHistory ? "lg:col-span-3" : "lg:col-span-4"}>
-            <Card className="h-[500px] lg:h-[600px] flex flex-col">
-              {/* Chat Header */}
-              <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                    <Bot className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-gray-900 dark:text-blue-400">CampusReels AI</h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {isMockMode() ? 'Demo Mode' : 'Google AI Active'}
-                    </p>
-                  </div>
+          <div className="flex-1 flex flex-col bg-white dark:bg-gray-800">
+            {/* Chat Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                  <Bot className="w-4 h-4 text-white" />
                 </div>
-                <div className="flex items-center space-x-2">
+                <div>
+                  <h3 className="font-medium text-gray-900 dark:text-blue-400">CampusReels AI</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {isMockMode() ? 'Demo Mode' : 'Google AI Active'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowChatHistory(!showChatHistory)}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  <History className="w-4 h-4 mr-1" />
+                  History
+                </Button>
+                
+                {messages.length > 0 && (
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setShowChatHistory(!showChatHistory)}
+                    onClick={startNewChat}
                     className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                   >
-                    <History className="w-4 h-4 mr-1" />
-                    History
+                    <MessageSquare className="w-4 h-4 mr-1" />
+                    New Chat
                   </Button>
-                  
-                  {messages.length > 0 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={startNewChat}
-                      className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                    >
-                      <MessageSquare className="w-4 h-4 mr-1" />
-                      New Chat
-                    </Button>
-                  )}
-                  
-                  {messages.length > 0 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={clearChat}
-                      className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                    >
-                      <Trash2 className="w-4 h-4 mr-1" />
-                      Clear
-                    </Button>
-                  )}
-                </div>
-              </div>
-
-              {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-6">
-                <AnimatePresence>
-                  {messages.length === 0 ? (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="flex items-center justify-center h-full text-center"
-                    >
-                      <div>
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto mb-4">
-                          <MessageSquare className="w-8 h-8 text-white" />
-                        </div>
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-blue-400 mb-2">
-                          Start a conversation
-                        </h3>
-                        <p className="text-gray-600 dark:text-blue-300 mb-4">
-                          Ask me anything about your courses or homework!
-                        </p>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                          Try: "Help me understand derivatives" or "Explain photosynthesis"
-                        </div>
-                      </div>
-                    </motion.div>
-                  ) : (
-                    messages.map(renderMessage)
-                  )}
-                </AnimatePresence>
+                )}
                 
-                {isLoading && (
+                {messages.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearChat}
+                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  >
+                    <Trash2 className="w-4 h-4 mr-1" />
+                    Clear
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-6">
+              <AnimatePresence>
+                {messages.length === 0 ? (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="flex justify-start mb-4"
+                    className="flex items-center justify-center h-full text-center"
                   >
-                    <div className="flex items-start space-x-3">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                        <Bot className="w-4 h-4 text-white" />
+                    <div>
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto mb-4">
+                        <MessageSquare className="w-8 h-8 text-white" />
                       </div>
-                      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3">
-                        <div className="flex items-center space-x-2">
-                          <div className="flex space-x-1">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
-                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                          </div>
-                          <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {isMockMode() ? 'Generating response...' : 'Google AI is thinking...'}
-                          </span>
-                        </div>
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-blue-400 mb-2">
+                        Start a conversation
+                      </h3>
+                      <p className="text-gray-600 dark:text-blue-300 mb-4">
+                        Ask me anything about your courses or homework!
+                      </p>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        Try: "Help me understand derivatives" or "Explain photosynthesis"
                       </div>
                     </div>
                   </motion.div>
+                ) : (
+                  messages.map(renderMessage)
                 )}
-                <div ref={messagesEndRef} />
-              </div>
-
-              {/* Input */}
-              <div className="border-t border-gray-200 dark:border-gray-700 p-6">
-                <form onSubmit={handleSubmit} className="flex space-x-3">
-                  <div className="flex-1 relative">
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      placeholder="Ask a homework question..."
-                      className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                      disabled={isLoading}
-                    />
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400">
-                      Press Enter to send
+              </AnimatePresence>
+              
+              {isLoading && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex justify-start mb-4"
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                      <Bot className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3">
+                      <div className="flex items-center space-x-2">
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
+                          <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                          <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                        </div>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          {isMockMode() ? 'Generating response...' : 'Google AI is thinking...'}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <Button
-                    type="submit"
-                    disabled={!input.trim() || isLoading}
-                    className="px-6 bg-primary-500 hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isLoading ? (
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    ) : (
-                      <Send className="w-4 h-4" />
-                    )}
-                  </Button>
-                </form>
-                <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
-                  CampusReels AI can help with math, science, coding, and more. Be specific for better answers!
+                </motion.div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Input */}
+            <div className="border-t border-gray-200 dark:border-gray-700 p-6">
+              <form onSubmit={handleSubmit} className="flex space-x-3">
+                <div className="flex-1 relative">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Ask a homework question..."
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                    disabled={isLoading}
+                  />
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400">
+                    Press Enter to send
+                  </div>
                 </div>
+                <Button
+                  type="submit"
+                  disabled={!input.trim() || isLoading}
+                  className="px-6 bg-primary-500 hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                </Button>
+              </form>
+              <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
+                CampusReels AI can help with math, science, coding, and more. Be specific for better answers!
               </div>
-            </Card>
+            </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
+          {/* Right Sidebar */}
+          <div className="w-80 border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 space-y-6">
             {/* Course Selection */}
-            <Card>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-900 mb-3">Course Context</h3>
-                <select
-                  value={selectedCourse}
-                  onChange={(e) => setSelectedCourse(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                >
-                  <option value="">Select a course (optional)</option>
-                  {courses.map(course => (
-                    <option key={course.id} value={course.id}>
-                      {course.code} - {course.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </Card>
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-blue-400 mb-3">Course Context</h3>
+              <select
+                value={selectedCourse}
+                onChange={(e) => setSelectedCourse(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              >
+                <option value="">Select a course (optional)</option>
+                {courses.map(course => (
+                  <option key={course.id} value={course.id}>
+                    {course.code} - {course.title}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             {/* Tips */}
-            <Card>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-900 mb-3">Tips</h3>
-                <ul className="text-sm text-gray-600 space-y-2">
-                  <li>• Be specific about what you need help with</li>
-                  <li>• Include relevant formulas or concepts</li>
-                  <li>• Ask for step-by-step explanations</li>
-                  <li>• Save helpful responses as pointers</li>
-                </ul>
-              </div>
-            </Card>
+            <div>
+              <h3 className="font-bold text-gray-900 dark:text-blue-400 mb-3">Tips</h3>
+              <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-2">
+                <li>• Be specific about what you need help with</li>
+                <li>• Include relevant formulas or concepts</li>
+                <li>• Ask for step-by-step explanations</li>
+                <li>• Save helpful responses as pointers</li>
+              </ul>
+            </div>
           </div>
         </div>
       </motion.div>
