@@ -14,6 +14,11 @@ export default function FeedTabs() {
   const posts = storage.getPosts();
   const pointers = storage.getPointers();
 
+  // Debug logging
+  console.log('FeedTabs - Reels:', reels.length);
+  console.log('FeedTabs - Posts:', posts.length);
+  console.log('FeedTabs - Pointers:', pointers.length);
+
   // Combine and sort all content by creation date
   const allContent = [
     ...reels.map(reel => ({ ...reel, type: 'reel' as const })),

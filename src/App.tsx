@@ -22,7 +22,9 @@ import VerifyEmail from './pages/VerifyEmail';
 function App() {
   useEffect(() => {
     // Hydrate demo data on first load
+    console.log('App - Hydrating demo data...');
     hydrateDemo();
+    console.log('App - Demo data hydrated');
   }, []);
 
   return (
