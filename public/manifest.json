@@ -1,0 +1,22 @@
+{
+  "name": "CampusReels",
+  "short_name": "CampusReels",
+  "description": "Instagram-style student app for sharing reels, posts, and getting AI homework help",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3B82F6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/campus-reels-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "social", "productivity"],
+  "lang": "en",
+  "dir": "ltr"
+}
+

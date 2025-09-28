@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light;
+  color: #0B1020;
+  background: linear-gradient(135deg, #EBF3FF 0%, #FFFFFF 100%);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  color-scheme: dark;
+  color: #60A5FA; /* Bright blue text */
+  background: linear-gradient(135deg, #0B1220 0%, #0A0F1A 100%);
+}
+
+[data-theme="dark"] body {
+  background: linear-gradient(135deg, #0B1220 0%, #0A0F1A 100%);
+}
+
+/* Dark mode text overrides */
+[data-theme="dark"] .text-gray-900 {
+  color: #60A5FA !important; /* Bright blue for main text */
+}
+
+[data-theme="dark"] .text-gray-800 {
+  color: #93C5FD !important; /* Lighter blue for secondary text */
+}
+
+[data-theme="dark"] .text-gray-700 {
+  color: #93C5FD !important; /* Lighter blue for tertiary text */
+}
+
+[data-theme="dark"] .text-gray-600 {
+  color: #BFDBFE !important; /* Even lighter blue for muted text */
+}
+
+[data-theme="dark"] .text-gray-500 {
+  color: #DBEAFE !important; /* Very light blue for subtle text */
+}
+
+[data-theme="dark"] .text-gray-400 {
+  color: #EFF6FF !important; /* Even lighter blue for very subtle text */
+}
+
+[data-theme="dark"] .text-gray-300 {
+  color: #F0F9FF !important; /* Lightest blue for barely visible text */
+}
+
+/* Dark mode for specific components */
+[data-theme="dark"] .prose {
+  color: #93C5FD !important;
+}
+
+[data-theme="dark"] .prose h1,
+[data-theme="dark"] .prose h2,
+[data-theme="dark"] .prose h3 {
+  color: #60A5FA !important;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  /* Improve touch targets */
+  button, a, input, select, textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Prevent zoom on input focus */
+  input, select, textarea {
+    font-size: 16px;
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Better touch feedback */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+}
+
+/* Hashtag contrast fix for dark theme */
+.hashtag {
+  @apply text-blue-700 dark:text-blue-300;
+}
+
+[data-theme="dark"] .hashtag {
+  text-shadow: 0 0 1px rgb(0 0 0 / 0.5);
+}
+
+/* Prose hashtag styling */
+.prose .hashtag {
+  @apply text-blue-700 dark:text-blue-300;
+}
+
+[data-theme="dark"] .prose .hashtag {
+  text-shadow: 0 0 1px rgb(0 0 0 / 0.5);
+}
+
+/* PWA optimizations */
+@media (display-mode: standalone) {
+  body {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #EBF3FF 0%, #FFFFFF 100%);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Focus styles */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+}
+
+/* Animation utilities */
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.2s ease-out;
+}
+
+.animate-bounce-gentle {
+  animation: bounceGentle 0.3s ease-out;
+}
+
+/* Code block styles */
+pre {
+  @apply bg-gray-100 rounded-lg p-4 overflow-x-auto;
+}
+
+code {
+  @apply bg-gray-100 px-1 py-0.5 rounded text-sm;
+}
+
+pre code {
+  @apply bg-transparent p-0;
+}
+
+/* LaTeX styles */
+.katex {
+  font-size: 1em;
+}
